@@ -130,6 +130,7 @@ namespace BBSeedsExtended.Patches
 			if (GameLoaderSingleton.instance != null)
 			{
 				long val = new System.Random().NextInt64();
+				val = UnityEngine.Random.value > 0.5f ? val : -val;
 				___seed = val.RoundLongVal(2, 2);
 				GameLoaderSingleton.seed = val.ToString();
 				return false;
