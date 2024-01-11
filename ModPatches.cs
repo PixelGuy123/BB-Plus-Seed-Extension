@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Reflection.Emit;
 using System;
 using TMPro;
-using MTM101BaldAPI.Reflection;
 using UnityEngine;
 using BBSeedsExtended.Plugin;
 
@@ -18,7 +17,7 @@ namespace BBSeedsExtended.Patches
 			instance = __instance;
 			if (!Singleton<PlayerFileManager>.Instance.savedGameData.saveAvailable && ___seedInput.UseSeed) 
 			{
-				string val = (string)___seedInput.ReflectionGetVariable("currentValue");
+				string val = (string)AccessTools.Field(typeof(SeedInput), "currentValue").GetValue(___seedInput);
 
 				bool isInt = int.TryParse(val, out _);
 				int skips = long.Parse(val).RoundLongVal(2, 2);
@@ -41,7 +40,7 @@ namespace BBSeedsExtended.Patches
 		{
 			if (__instance.seedInput.UseSeed)
 			{
-				string val = (string)__instance.seedInput.ReflectionGetVariable("currentValue");
+				string val = (string)AccessTools.Field(typeof(SeedInput), "currentValue").GetValue(__instance.seedInput);
 				bool isInt = int.TryParse(val, out _);
 				int skips = long.Parse(val).RoundLongVal(2, 2);
 				GameLoaderSingleton.skips = skips == 0 && !isInt ? 1 : skips; // 0 if it's not a long value (to maintain the og seeds)

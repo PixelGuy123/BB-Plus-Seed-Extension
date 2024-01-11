@@ -1,7 +1,6 @@
 ﻿using BBSeedsExtended.Patches;
 using BepInEx;
 using HarmonyLib;
-using MTM101BaldAPI.AssetManager;
 using System.IO;
 using System;
 using System.Text;
@@ -14,6 +13,7 @@ namespace BBSeedsExtended.Plugin
 	{
 		void Awake()
 		{
+			ogpath = Path.Combine(Application.streamingAssetsPath, "Modded", Info.Metadata.GUID);
 			i = this;
 
 			Harmony harmony = new(ModInfo.GUID);
@@ -22,15 +22,14 @@ namespace BBSeedsExtended.Plugin
 
 		public void SaveSeed()
 		{
-			string path = AssetManager.GetModPath(this); // Get folder
-			Directory.CreateDirectory(path); // Create folder
+			Directory.CreateDirectory(ogpath); // Create folder
 			if (!string.IsNullOrEmpty(GameLoaderSingleton.seed))
-				File.WriteAllText(Path.Combine(path, $"{Singleton<PlayerFileManager>.Instance.fileName}.txt"), Convert.ToBase64String(Encoding.UTF8.GetBytes(GameLoaderSingleton.seed)));
+				File.WriteAllText(Path.Combine(ogpath, $"{Singleton<PlayerFileManager>.Instance.fileName}.txt"), Convert.ToBase64String(Encoding.UTF8.GetBytes(GameLoaderSingleton.seed)));
 		}
 
 		public void LoadSeed()
 		{
-			string path = Path.Combine(AssetManager.GetModPath(this), $"{Singleton<PlayerFileManager>.Instance.fileName}.txt");
+			string path = Path.Combine(ogpath, $"{Singleton<PlayerFileManager>.Instance.fileName}.txt");
 			
 			if (!File.Exists(path))
 				return;
@@ -55,6 +54,8 @@ namespace BBSeedsExtended.Plugin
 		}
 
 		public static BasePlugin i;
+
+		string ogpath = string.Empty;
 	}
 
 
