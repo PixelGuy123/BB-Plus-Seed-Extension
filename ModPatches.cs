@@ -16,14 +16,16 @@ namespace BBSeedsExtended.Patches
 		{
 			instance = __instance;
 			if (!Singleton<PlayerFileManager>.Instance.savedGameData.saveAvailable && ___seedInput.UseSeed) 
-			{
-				string val = (string)AccessTools.Field(typeof(SeedInput), "currentValue").GetValue(___seedInput);
+				SetSeed((string)AccessTools.Field(typeof(SeedInput), "currentValue").GetValue(___seedInput));
+			
+		}
 
-				bool isInt = int.TryParse(val, out _);
-				int skips = long.Parse(val).RoundLongVal(2, 2);
-				GameLoaderSingleton.skips = skips == 0 && !isInt ? 1 : skips; // Just to guarantee 1 if it was still a long value
-				seed = val;
-			}
+		public static void SetSeed(string val)
+		{
+			bool isInt = int.TryParse(val, out _);
+			int skips = long.Parse(val).RoundLongVal(2, 2);
+			GameLoaderSingleton.skips = skips == 0 && !isInt ? 1 : skips; // Just to guarantee 1 if it was still a long value
+			seed = val;
 		}
 
 		public static GameLoader instance;
@@ -39,13 +41,8 @@ namespace BBSeedsExtended.Patches
 		private static void Prefix(EndlessMapOverview __instance)
 		{
 			if (__instance.seedInput.UseSeed)
-			{
-				string val = (string)AccessTools.Field(typeof(SeedInput), "currentValue").GetValue(__instance.seedInput);
-				bool isInt = int.TryParse(val, out _);
-				int skips = long.Parse(val).RoundLongVal(2, 2);
-				GameLoaderSingleton.skips = skips == 0 && !isInt ? 1 : skips; // 0 if it's not a long value (to maintain the og seeds)
-				GameLoaderSingleton.seed = val;
-			}
+				GameLoaderSingleton.SetSeed((string)AccessTools.Field(typeof(SeedInput), "currentValue").GetValue(__instance.seedInput));
+			
 		}
 	}
 
@@ -131,7 +128,7 @@ namespace BBSeedsExtended.Patches
 				long val = new System.Random().NextInt64();
 				val = UnityEngine.Random.value > 0.5f ? val : -val;
 				___seed = val.RoundLongVal(2, 2);
-				GameLoaderSingleton.seed = val.ToString();
+				GameLoaderSingleton.SetSeed(val.ToString());
 				return false;
 			}
 
