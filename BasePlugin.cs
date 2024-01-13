@@ -38,11 +38,7 @@ namespace BBSeedsExtended.Plugin
 			
 			try
 			{
-				GameLoaderSingleton.seed = Encoding.UTF8.GetString(Convert.FromBase64String(line));
-
-				bool isInt = int.TryParse(GameLoaderSingleton.seed, out _);
-				int skips = long.Parse(GameLoaderSingleton.seed).RoundLongVal(2, 2);
-				GameLoaderSingleton.skips = skips == 0 && !isInt ? 1 : skips;
+				GameLoaderSingleton.SetSeed(Encoding.UTF8.GetString(Convert.FromBase64String(line)));
 			}
 			catch (Exception e)
 			{
