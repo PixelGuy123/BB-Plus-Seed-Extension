@@ -23,8 +23,8 @@ namespace BBSeedsExtended.Patches
 		public static void SetSeed(string val)
 		{
 			bool isInt = int.TryParse(val, out _);
-			int skips = long.Parse(val).RoundLongVal(2, 2);
-			GameLoaderSingleton.skips = skips == 0 && !isInt ? 1 : skips; // Just to guarantee 1 if it was still a long value
+			int skips = long.Parse(val).RoundLongVal(2, 2) + 1;
+			GameLoaderSingleton.skips = isInt ? 0 : skips; // Just to guarantee 1 if it was still a long value
 			seed = val;
 		}
 
