@@ -7,7 +7,7 @@ namespace BBSeedsExtended.Patches
 		public static int RoundLongVal(this long lres, int minoffset = 0, int maxoffset = 0) =>
 			(int)(lres > 0 ? lres % int.MaxValue + maxoffset : lres % int.MinValue + minoffset);
 
-		public static long NextInt64(this Random rnd)
+		public static long NextInt64(this Random rnd) // Credits to: https://stackoverflow.com/a/677390 for the extension method
 		{
 			var buffer = new byte[sizeof(long)];
 			rnd.NextBytes(buffer);
