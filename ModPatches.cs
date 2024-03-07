@@ -22,8 +22,15 @@ namespace BBSeedsExtended.Patches
 
 		public static void SetSeed(string val)
 		{
+			if (!long.TryParse(val, out var s))
+			{
+				seed = "0";
+				GameLoaderSingleton.skips = 0;
+				return;
+			}
+
 			bool isInt = int.TryParse(val, out _);
-			int skips = long.Parse(val).RoundLongVal(2, 2) + 1;
+			int skips = s.RoundLongVal(2, 2) + 1;
 			GameLoaderSingleton.skips = isInt ? 0 : skips; // Just to guarantee 1 if it was still a long value
 			seed = val;
 		}
@@ -202,24 +209,6 @@ namespace BBSeedsExtended.Patches
 		}
 
 		const int divider = 10;
-	}
-
-	[HarmonyPatch(typeof(PlayerFileManager), "Save", [typeof(float)])]
-	internal class PlayerManagerPatch
-	{
-		private static void Prefix() =>
-			BasePlugin.i.SaveSeed();
-		
-	}
-
-	[HarmonyPatch(typeof(MainModeButtonController), "OnEnable")]
-	internal class MainMenuButtonPatch
-	{
-		private static void Prefix()
-		{
-			if (Singleton<PlayerFileManager>.Instance.savedGameData.saveAvailable)
-				BasePlugin.i.LoadSeed();
-		}
 	}
 
 

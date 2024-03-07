@@ -3,8 +3,8 @@ using BepInEx;
 using HarmonyLib;
 using System.IO;
 using System;
-using System.Text;
 using UnityEngine;
+using MTM101BaldAPI.SaveSystem;
 
 namespace BBSeedsExtended.Plugin
 {
@@ -13,32 +13,32 @@ namespace BBSeedsExtended.Plugin
 	{
 		void Awake()
 		{
-			ogpath = Path.Combine(Application.streamingAssetsPath, "Modded", Info.Metadata.GUID);
 			i = this;
 
 			Harmony harmony = new(ModInfo.GUID);
 			harmony.PatchAll();
+
+			ModdedSaveGame.AddSaveHandler(new SavedSeedInBinary(Info));
 		}
 
-		public void SaveSeed()
+		public static BasePlugin i;
+
+	}
+
+	internal class SavedSeedInBinary(PluginInfo info) : ModdedSaveGameIOBinary
+	{
+		readonly PluginInfo _pg = info;
+		public override PluginInfo pluginInfo => _pg;
+
+		public override void Reset()
 		{
-			Directory.CreateDirectory(ogpath); // Create folder
-			if (!string.IsNullOrEmpty(GameLoaderSingleton.seed))
-				File.WriteAllText(Path.Combine(ogpath, $"{Singleton<PlayerFileManager>.Instance.fileName}.txt"), Convert.ToBase64String(Encoding.UTF8.GetBytes(GameLoaderSingleton.seed)));
 		}
 
-		public void LoadSeed()
+		public override void Load(BinaryReader reader)
 		{
-			string path = Path.Combine(ogpath, $"{Singleton<PlayerFileManager>.Instance.fileName}.txt");
-			
-			if (!File.Exists(path))
-				return;
-
-			string line = File.ReadAllText(path);
-			
 			try
 			{
-				GameLoaderSingleton.SetSeed(Encoding.UTF8.GetString(Convert.FromBase64String(line)));
+				GameLoaderSingleton.SetSeed(reader.ReadString());
 			}
 			catch (Exception e)
 			{
@@ -49,9 +49,10 @@ namespace BBSeedsExtended.Plugin
 			}
 		}
 
-		public static BasePlugin i;
-
-		string ogpath = string.Empty;
+		public override void Save(BinaryWriter writer)
+		{
+			writer.Write(GameLoaderSingleton.seed);
+		}
 	}
 
 
@@ -59,6 +60,6 @@ namespace BBSeedsExtended.Plugin
 	{
 		internal const string GUID = "pixelguy.pixelmodding.baldiplus.bbseedextended";
 		internal const string Name = "Baldi\'s Seed Extension";
-		internal const string Version = "1.0.0";
+		internal const string Version = "1.0.2";
 	}
 }
