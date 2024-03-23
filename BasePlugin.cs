@@ -60,6 +60,6 @@ namespace BBSeedsExtended.Plugin
 	{
 		internal const string GUID = "pixelguy.pixelmodding.baldiplus.bbseedextended";
 		internal const string Name = "Baldi\'s Seed Extension";
-		internal const string Version = "1.0.2";
+		internal const string Version = "1.0.2.1";
 	}
 }

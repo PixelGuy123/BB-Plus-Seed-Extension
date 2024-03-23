@@ -4,7 +4,6 @@ using System.Reflection.Emit;
 using System;
 using TMPro;
 using UnityEngine;
-using BBSeedsExtended.Plugin;
 
 namespace BBSeedsExtended.Patches
 {
@@ -15,7 +14,8 @@ namespace BBSeedsExtended.Patches
 		private static void Prefix(GameLoader __instance, SeedInput ___seedInput)
 		{
 			instance = __instance;
-			if (!Singleton<PlayerFileManager>.Instance.savedGameData.saveAvailable && ___seedInput.UseSeed) 
+
+			if ((Singleton<PlayerFileManager>.Instance == null || !Singleton<PlayerFileManager>.Instance.savedGameData.saveAvailable) && ___seedInput != null && ___seedInput.UseSeed) 
 				SetSeed((string)AccessTools.Field(typeof(SeedInput), "currentValue").GetValue(___seedInput));
 			
 		}
