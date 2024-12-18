@@ -15,8 +15,8 @@ namespace BBSeedsExtended.Patches
 		{
 			instance = __instance;
 
-			if ((Singleton<PlayerFileManager>.Instance == null || !Singleton<PlayerFileManager>.Instance.savedGameData.saveAvailable) && ___seedInput != null && ___seedInput.UseSeed) 
-				SetSeed((string)AccessTools.Field(typeof(SeedInput), "currentValue").GetValue(___seedInput));
+			if ((Singleton<PlayerFileManager>.Instance == null || string.IsNullOrEmpty(seed) || !Singleton<PlayerFileManager>.Instance.savedGameData.saveAvailable) && ___seedInput != null && ___seedInput.UseSeed) 
+				SetSeed(___seedInput.currentValue);
 			
 		}
 
@@ -48,7 +48,7 @@ namespace BBSeedsExtended.Patches
 		private static void Prefix(EndlessMapOverview __instance)
 		{
 			if (__instance.seedInput.UseSeed)
-				GameLoaderSingleton.SetSeed((string)AccessTools.Field(typeof(SeedInput), "currentValue").GetValue(__instance.seedInput));
+				GameLoaderSingleton.SetSeed(__instance.seedInput.currentValue);
 			
 		}
 	}
